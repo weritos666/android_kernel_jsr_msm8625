@@ -852,7 +852,7 @@ msm_v4l2_overlay_open(struct file *file)
 		| V4L2_FBUF_CAP_LOCAL_ALPHA;
 	vout->fb.flags = V4L2_FBUF_FLAG_LOCAL_ALPHA;
 	vout->fb.base = 0;
-	memcpy(&vout->fb.fmt, pix, sizeof(struct v4l2_format));
+	memcpy(&vout->fb.fmt, pix, sizeof(struct v4l2_pix_format));
 
 	vout->bufs = 0;
 	vout->numbufs = 0;
