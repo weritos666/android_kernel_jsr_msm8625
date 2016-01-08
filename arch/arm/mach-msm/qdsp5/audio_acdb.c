@@ -1941,7 +1941,7 @@ static u8 check_tx_acdb_values_cached(void)
 static void handle_tx_device_ready_callback(void)
 {
 	u8 acdb_value_apply = 0;
-	u8 result = 0;
+	int result = 0;
 
 	/*check wheather AUDREC enabled before device call backs*/
 	if ((acdb_data.acdb_state & AUDREC_READY) &&
