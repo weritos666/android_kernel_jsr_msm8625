@@ -429,7 +429,7 @@ static int handle_ping_apps_data_register(struct msm_rpc_server *server,
 					  struct rpc_request_hdr *req,
 					  struct msm_rpc_xdr *xdr)
 {
-	uint32_t rc;
+	int rc;
 	struct ping_apps_data_arg arg;
 	struct ping_apps_data_ret ret;
 
@@ -460,7 +460,7 @@ static int handle_ping_apps_data_cb_reg(struct msm_rpc_server *server,
 					struct rpc_request_hdr *req,
 					struct msm_rpc_xdr *xdr)
 {
-	uint32_t rc;
+	int rc;
 	struct ping_apps_data_cb_reg_arg arg;
 	struct ping_apps_data_cb_reg_ret ret;
 
@@ -491,7 +491,7 @@ static int handle_ping_apps_data_cb_unreg(struct msm_rpc_server *server,
 					  struct rpc_request_hdr *req,
 					  struct msm_rpc_xdr *xdr)
 {
-	uint32_t rc;
+	int rc;
 	struct ping_apps_data_cb_unreg_arg arg;
 	struct ping_apps_data_cb_unreg_ret ret;
 
@@ -518,7 +518,7 @@ static int handle_ping_apps_register(struct msm_rpc_server *server,
 				     struct rpc_request_hdr *req,
 				     struct msm_rpc_xdr *xdr)
 {
-	uint32_t rc;
+	int rc;
 	struct ping_apps_register_arg arg;
 	struct ping_apps_register_ret ret;
 
@@ -546,7 +546,7 @@ static int handle_ping_apps_unregister(struct msm_rpc_server *server,
 				       struct rpc_request_hdr *req,
 				       struct msm_rpc_xdr *xdr)
 {
-	uint32_t rc;
+	int rc;
 	struct ping_apps_unregister_arg arg;
 	struct ping_apps_unregister_ret ret;
 
