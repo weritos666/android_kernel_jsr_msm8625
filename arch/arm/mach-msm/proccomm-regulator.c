@@ -295,7 +295,7 @@ static int __devinit proccomm_vreg_probe(struct platform_device *pdev)
 	struct proccomm_regulator_platform_data *pdata = dev->platform_data;
 	struct regulator_dev **rdevs;
 	int rc = 0;
-	size_t i = 0;
+	int i = 0;
 
 	if (!pdata) {
 		dev_err(dev, "invalid platform data\n");
@@ -323,7 +323,7 @@ static int __devinit proccomm_vreg_probe(struct platform_device *pdev)
 
 	dev_dbg(dev, "registering %d proccomm regulators\n", pdata->nregs);
 
-	for (i = 0; i < pdata->nregs; i++) {
+	for (i = 0; i < (int)pdata->nregs; i++) {
 		rdevs[i] = create_proccomm_rdev(&pdata->regs[i], dev);
 		if (IS_ERR(rdevs[i])) {
 			rc = PTR_ERR(rdevs[i]);
