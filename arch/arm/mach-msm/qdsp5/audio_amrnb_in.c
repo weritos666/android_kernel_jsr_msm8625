@@ -701,7 +701,7 @@ static void audamrnb_ioport_reset(struct audio_amrnb_in *audio)
 
 static void audamrnb_in_flush(struct audio_amrnb_in *audio)
 {
-	uint8_t i;
+	int32_t i;
 
 	audio->dsp_cnt = 0;
 	audio->in_head = 0;
@@ -720,7 +720,7 @@ static void audamrnb_in_flush(struct audio_amrnb_in *audio)
 
 static void audamrnb_out_flush(struct audio_amrnb_in *audio)
 {
-	uint8_t i;
+	int32_t i;
 
 	audio->out_head = 0;
 	audio->out_tail = 0;
