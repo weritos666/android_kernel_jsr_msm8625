@@ -647,7 +647,7 @@ static ssize_t ltr558_store_debug_regs(struct device *dev,
 static ssize_t ltr558_show_adc_data(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
-	u8 high,low;
+	int high,low;
 	char *after;
 	after = buf;
 
