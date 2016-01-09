@@ -205,7 +205,7 @@ static int msm_pcm_playback_prepare(struct snd_pcm_substream *substream)
 	prtd->out_sample_rate = runtime->rate;
 	prtd->out_channel_mode = runtime->channels;
 
-	if (prtd->enabled | !(prtd->mmap_flag))
+	if (prtd->enabled || !(prtd->mmap_flag))
 		return 0;
 
 	prtd->data = substream->dma_buffer.area;
