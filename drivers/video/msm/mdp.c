@@ -2630,7 +2630,7 @@ static int mdp_probe(struct platform_device *pdev)
 			return -ENOMEM;
 
 		mdp_irq = platform_get_irq(pdev, 0);
-		if (mdp_irq < 0) {
+		if ((int)mdp_irq < 0) {
 			pr_err("mdp: can not get mdp irq\n");
 			return -ENOMEM;
 		}
