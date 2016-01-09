@@ -297,7 +297,7 @@ static int io_submit_init(struct ext4_io_submit *io,
 	bio->bi_private = io->io_end = io_end;
 	bio->bi_end_io = ext4_end_bio;
 
-	io_end->offset = (page->index << PAGE_CACHE_SHIFT) + bh_offset(bh);
+	io_end->offset = ((loff_t)page->index << PAGE_CACHE_SHIFT) + bh_offset(bh);
 
 	io->io_bio = bio;
 	io->io_op = (wbc->sync_mode == WB_SYNC_ALL ?  WRITE_SYNC : WRITE);
