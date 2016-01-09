@@ -1343,9 +1343,6 @@ static int snd_timer_user_next_device(struct snd_timer_id __user *_tid)
 			if (id.card < 0) {
 				id.card = 0;
 			} else {
-				if (id.card < 0) {
-					id.card = 0;
-				} else {
 					if (id.device < 0) {
 						id.device = 0;
 					} else {
@@ -1355,7 +1352,6 @@ static int snd_timer_user_next_device(struct snd_timer_id __user *_tid)
 							id.subdevice++;
 						}
 					}
-				}
 			}
 			list_for_each(p, &snd_timer_list) {
 				timer = list_entry(p, struct snd_timer, device_list);
