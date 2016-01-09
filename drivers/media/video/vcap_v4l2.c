@@ -142,7 +142,7 @@ int vcap_clk_powerup(struct vcap_dev *dev, struct device *ddev,
 	}
 
 	rate = clk_round_rate(dev->vcap_clk, rate);
-	if (rate < 0) {
+	if ((long)rate < 0) {
 		pr_err("%s: Failed core rnd_rate\n", __func__);
 		goto fail_vcap_clk;
 	}
