@@ -424,7 +424,7 @@ static int msm_ion_get_heap_size(struct device_node *node,
 
 		if (!ret && memory_name_prop) {
 			val = msm_get_memory_type_from_name(memory_name_prop);
-			if (val < 0) {
+			if ((int)val < 0) {
 				ret = -EINVAL;
 				goto out;
 			}
