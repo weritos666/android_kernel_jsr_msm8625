@@ -146,7 +146,7 @@ static int msm_vb2_ops_buf_prepare(struct vb2_buffer *vb)
 	struct msm_cam_v4l2_dev_inst *pcam_inst;
 	struct msm_cam_v4l2_device *pcam;
 	struct msm_frame_buffer *buf;
-	struct vb2_queue	*vq = vb->vb2_queue;
+	struct vb2_queue	*vq = vb ? vb->vb2_queue : NULL;
 
 	D("%s\n", __func__);
 	if (!vb || !vq) {
@@ -273,7 +273,7 @@ static void msm_vb2_ops_buf_queue(struct vb2_buffer *vb)
 	struct msm_cam_v4l2_dev_inst *pcam_inst = NULL;
 	struct msm_cam_v4l2_device *pcam = NULL;
 	unsigned long flags = 0;
-	struct vb2_queue *vq = vb->vb2_queue;
+	struct vb2_queue *vq = vb ? vb->vb2_queue : NULL;
 	struct msm_frame_buffer *buf;
 	D("%s\n", __func__);
 	if (!vb || !vq) {
