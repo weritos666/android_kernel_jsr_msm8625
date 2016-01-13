@@ -30,8 +30,8 @@
 #define NUM_REGS_ENABLE		2
 /* (NR_MSM_IRQS/32) 96 max irqs supported */
 #define NUM_REGS_DISABLE	3
-#define GIC_IRQ_MASK(irq)	BIT(irq % 32)
-#define GIC_IRQ_INDEX(irq)	(irq / 32)
+#define GIC_IRQ_MASK(irq)	BIT((irq) % 32)
+#define GIC_IRQ_INDEX(irq)	((irq) / 32)
 
 enum {
 	IRQ_DEBUG_SLEEP_INT_TRIGGER	= BIT(0),
