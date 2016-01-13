@@ -529,6 +529,9 @@ static int alarm_timer_create(struct k_itimer *new_timer)
 		return -EPERM;
 
 	type = clock2alarm(new_timer->it_clock);
+	if ((int)type < 0)
+		return -EINVAL;
+
 	base = &alarm_bases[type];
 	alarm_init(&new_timer->it.alarm.alarmtimer, type, alarm_handle_timer);
 	return 0;
@@ -741,6 +744,9 @@ static int alarm_timer_nsleep(const clockid_t which_clock, int flags,
 	ktime_t exp;
 	int ret = 0;
 	struct restart_block *restart;
+
+	if ((int)type < 0)
+		return -EINVAL;
 
 	if (!alarmtimer_get_rtcdev())
 		return -ENOTSUPP;
