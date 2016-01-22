@@ -29,9 +29,6 @@
 #define DEBUG_TRICOLOR_LED 0
 
 #ifdef CONFIG_JSR_KERNEL
-static int qrd5_led_flash_en1 = 32;
-static int qrd7_led_flash_en = 96;
-#else
 static int qrd5_led_flash_en1 = 13;
 static int qrd7_led_flash_en = 96;
 #endif

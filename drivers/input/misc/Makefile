@@ -1,4 +1,3 @@
-﻿#
 # Makefile for the input misc drivers.
 #
 
