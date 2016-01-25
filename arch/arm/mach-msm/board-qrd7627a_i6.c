@@ -463,9 +463,9 @@ early_param("reserve_adsp_size", reserve_adsp_size_setup);
 static u32 msm_calculate_batt_capacity(u32 current_voltage);
 
 static struct msm_psy_batt_pdata msm_psy_batt_data = {
-	.voltage_min_design     = 2800,
+	.voltage_min_design     = 3030,
 	.voltage_max_design     = 4300,
-	.voltage_fail_safe      = 3000,
+	.voltage_fail_safe      = 3102,
 	.avail_chg_sources      = AC_CHG | USB_CHG,
 	.batt_technology        = POWER_SUPPLY_TECHNOLOGY_LION,
 	.calculate_capacity     = &msm_calculate_batt_capacity,
@@ -903,7 +903,7 @@ static void __init msm7627a_init_regulators(void)
 /*start by lf 2012.12.26 for button-backlight*/
 #if defined(CONFIG_LEDS_GPIO) || defined(CONFIG_LEDS_GPIO_MODULE)
 
-#define I6_LED_GPIO_KEYBOARD  82
+#define I6_LED_GPIO_KEYBOARD  49
 
 static struct gpio_led gpio_leds[] = {
 	[0] = {

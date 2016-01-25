@@ -77,10 +77,10 @@
 #define BATTERY_CB_ID_LOW_VOL		2
 
 #ifdef CONFIG_MSM_BATTERY_CHG_LEGACY
-#define QCOM_BATTERY_LOW    3500
-#define QCOM_BATTERY_HIGH   4200
-#define BATTERY_LOW         3200
-#define BATTERY_HIGH        4200
+#define QCOM_BATTERY_LOW    3030
+#define QCOM_BATTERY_HIGH   4300
+#define BATTERY_LOW         2800
+#define BATTERY_HIGH        4300
 #else
 #define BATTERY_LOW		3200
 #define BATTERY_HIGH		4300
