@@ -886,7 +886,7 @@ static void __init msm7627a_init_regulators(void)
 /*start by lf 2012.12.26 for button-backlight*/
 #if defined(CONFIG_LEDS_GPIO) || defined(CONFIG_LEDS_GPIO_MODULE)
 
-#define I6_LED_GPIO_KEYBOARD  49
+#define I6_LED_GPIO_KEYBOARD  82
 
 static struct gpio_led gpio_leds[] = {
 	[0] = {
