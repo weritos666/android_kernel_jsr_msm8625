@@ -77,13 +77,46 @@
 #define BATTERY_CB_ID_LOW_VOL		2
 
 #ifdef CONFIG_MSM_BATTERY_CHG_LEGACY
-#define QCOM_BATTERY_LOW    3030
-#define QCOM_BATTERY_HIGH   4300
-#define BATTERY_LOW         2800
-#define BATTERY_HIGH        4300
+#define QCOM_BATTERY_LOW    3500
+#define QCOM_BATTERY_HIGH   4200
+#define BATTERY_LOW         3200
+#define BATTERY_HIGH        4200
 #else
 #define BATTERY_LOW		3200
 #define BATTERY_HIGH		4300
+#endif
+
+#ifdef CONFIG_MSM_BATTERY_CHG_LEGACY
+
+#define BATT_CAP_DEFAULT    0
+#define BATT_CAP_SMOOTH     1
+#define BATT_CAP_MODEM      2
+
+static int batt_cap_type = BATT_CAP_DEFAULT;
+static int batt_v_max = 0;
+static int batt_v_min = 0;
+static int batt_v_fs = 0;
+
+static int __init batt_cap_setup(char *str)
+{
+	int ints[8];
+	str = get_options(str, 8, ints);
+	if (!ints[0])
+		return 1;
+	switch (ints[0]) {
+	case 4:
+		batt_v_fs = ints[4];
+	case 3:
+		batt_v_min = ints[3];
+	case 2:
+		batt_v_max = ints[2];
+	case 1:
+		batt_cap_type = ints[1];
+	}
+	return 1; 
+}
+__setup("batt_cap=", batt_cap_setup);
+
 #endif
 
 #define ONCRPC_CHG_GET_GENERAL_STATUS_PROC	12
@@ -625,11 +658,16 @@ static void msm_batt_update_psy_status(void)
 	v1p->battery_voltage  = reply_charger.battery_voltage & 0xFFFF;
 	v1p->battery_temp     = reply_charger.battery_temp * 10;
 	qcom_battery_capacity = reply_charger.battery_capacity & 0x7F;
-	if (qcom_battery_capacity == 100) {
-		v1p->battery_level = BATTERY_LEVEL_FULL;
+
+	v1p->battery_level = BATTERY_LEVEL_GOOD;
+	if (batt_cap_type == BATT_CAP_MODEM) {
+		if (qcom_battery_capacity >= 100)
+			v1p->battery_level = BATTERY_LEVEL_FULL;
 	} else {
-		v1p->battery_level = BATTERY_LEVEL_GOOD;
+		if (v1p->battery_voltage >= msm_batt_info.voltage_max_design)
+			v1p->battery_level = BATTERY_LEVEL_FULL;
 	}
+
 	if (reply_charger.is_charging) {
 		battery_charge_type = POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
 	} else {
@@ -846,7 +884,7 @@ static void msm_batt_update_psy_status(void)
 
 #ifdef CONFIG_MSM_BATTERY_CHG_LEGACY
 	if (msm_batt_info.battery_voltage != battery_voltage || 
-	    msm_batt_info.qcom_battery_capacity != qcom_battery_capacity) {
+	    (batt_cap_type == BATT_CAP_MODEM && msm_batt_info.qcom_battery_capacity != qcom_battery_capacity)) {
 #else
 	if (msm_batt_info.battery_voltage != battery_voltage) {
 #endif
@@ -1421,23 +1459,33 @@ static u32 msm_batt_capacity(u32 current_voltage)
 	    msm_batt_info.batt_status != POWER_SUPPLY_STATUS_NOT_CHARGING) {
 		msm_batt_info.qcom_battery_voltage_min = 9999;
 	}
-	if (high_voltage == QCOM_BATTERY_HIGH) {
-		if (msm_batt_info.qcom_battery_capacity > 0) {
-			current_voltage = ((high_voltage - QCOM_BATTERY_LOW) *
-			                    msm_batt_info.qcom_battery_capacity) / 100;
-			current_voltage += QCOM_BATTERY_LOW;
-		} else
-		if (current_voltage > msm_batt_info.qcom_battery_voltage_min) {
+	if (batt_cap_type == BATT_CAP_SMOOTH) {
+		if (current_voltage >= msm_batt_info.qcom_battery_voltage_min) {
 			current_voltage = msm_batt_info.qcom_battery_voltage_min;
+		} else {
+			if (current_voltage <= high_voltage)
+				msm_batt_info.qcom_battery_voltage_min = current_voltage;
 		}
 	}
-	if (current_voltage < msm_batt_info.qcom_battery_voltage_min)
-		if (current_voltage > low_voltage + 65)
-			msm_batt_info.qcom_battery_voltage_min = current_voltage;
-	if (current_voltage <= low_voltage - 50)
-		return 0;
-	if (current_voltage <= low_voltage)
-		return 1;
+	if (batt_cap_type == BATT_CAP_MODEM) {
+		if (high_voltage == QCOM_BATTERY_HIGH) {
+			if (msm_batt_info.qcom_battery_capacity > 0) {
+				current_voltage = ((high_voltage - QCOM_BATTERY_LOW) *
+				                    msm_batt_info.qcom_battery_capacity) / 100;
+				current_voltage += QCOM_BATTERY_LOW;
+			} else
+			if (current_voltage > msm_batt_info.qcom_battery_voltage_min) {
+				current_voltage = msm_batt_info.qcom_battery_voltage_min;
+			}
+		}
+		if (current_voltage < msm_batt_info.qcom_battery_voltage_min)
+			if (current_voltage > low_voltage + 65)
+				msm_batt_info.qcom_battery_voltage_min = current_voltage;
+		if (current_voltage <= low_voltage - 50)
+			return 0;
+		if (current_voltage <= low_voltage)
+			return 1;
+	}
 #endif
 	if (current_voltage <= low_voltage)
 		return 0;
@@ -1651,6 +1699,25 @@ static int __devinit msm_batt_probe(struct platform_device *pdev)
 
 	if (!msm_batt_info.calculate_capacity)
 		msm_batt_info.calculate_capacity = msm_batt_capacity;
+
+#ifdef CONFIG_MSM_BATTERY_CHG_LEGACY
+	if (batt_v_max > 0)
+		msm_batt_info.voltage_max_design = batt_v_max;
+	if (batt_v_min > 0)
+		msm_batt_info.voltage_min_design = batt_v_min;
+	if (batt_v_fs > 0) {
+		msm_batt_info.voltage_fail_safe = batt_v_fs;
+	} else {
+		if (batt_v_min > 0)
+			msm_batt_info.voltage_fail_safe = batt_v_min;
+	}
+	pr_info("%s: batt_cap_type = %d, batt_v_max = %d, batt_v_min = %d, batt_v_fs = %d \n",
+		__func__, batt_cap_type, msm_batt_info.voltage_max_design, 
+		msm_batt_info.voltage_min_design, msm_batt_info.voltage_fail_safe);
+
+	if (batt_cap_type != BATT_CAP_DEFAULT)
+		msm_batt_info.calculate_capacity = msm_batt_capacity;
+#endif
 
 	rc = power_supply_register(&pdev->dev, &msm_psy_batt);
 	if (rc < 0) {

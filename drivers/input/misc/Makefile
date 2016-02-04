@@ -1,3 +1,4 @@
+#
 # Makefile for the input misc drivers.
 #
 
@@ -35,6 +36,7 @@ obj-$(CONFIG_INPUT_MAX8925_ONKEY)	+= max8925_onkey.o
 obj-$(CONFIG_INPUT_MAX8997_HAPTIC)	+= max8997_haptic.o
 obj-$(CONFIG_INPUT_MC13783_PWRBUTTON)	+= mc13783-pwrbutton.o
 obj-$(CONFIG_INPUT_MMA8450)		+= mma8450.o
+obj-$(CONFIG_MXC_MMA8452)		+= mxc_mma8452.o
 obj-$(CONFIG_INPUT_MPU3050)		+= mpu3050.o
 obj-$(CONFIG_INPUT_PCAP)		+= pcap_keys.o
 obj-$(CONFIG_INPUT_PCF50633_PMU)	+= pcf50633-input.o
@@ -61,8 +63,6 @@ obj-$(CONFIG_INPUT_PMIC8058_VIBRA_MEMLESS) += pmic8058-vib-memless.o
 obj-$(CONFIG_BOSCH_BMA150)              += bma150.o
 obj-$(CONFIG_INPUT_LTR502) 		+= ltr502.o
 obj-$(CONFIG_INPUT_LTR558)		+= ltr558.o
-obj-$(CONFIG_INPUT_LTR558_I6)		+= ltr558_i6.o
-obj-y                  += yamaha/
-
 obj-$(CONFIG_HUAWEI_FEATURE_PROXIMITY_EVERLIGHT_APS_12D)  += aps-12d.o
 obj-$(CONFIG_HUAWEI_FEATURE_PROXIMITY_EVERLIGHT_APS_9900)  += aps-9900.o
+obj-y += yamaha/

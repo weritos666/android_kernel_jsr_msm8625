@@ -646,7 +646,7 @@ static int __init bluesleep_probe(struct platform_device *pdev)
 		goto free_bt_ext_wake;
 
 	bsi->host_wake_irq = platform_get_irq_byname(pdev, "host_wake");
-	if (bsi->host_wake_irq < 0) {
+	if ((int)bsi->host_wake_irq < 0) {
 		BT_ERR("couldn't find host_wake irq\n");
 		ret = -ENODEV;
 		goto free_bt_ext_wake;
@@ -873,7 +873,11 @@ MODULE_LICENSE("GPL");
 #define VERSION		"1.1"
 #define PROC_DIR	"bluetooth/sleep"
 
+#ifdef CONFIG_HUAWEI_KERNEL
 #define BT_BLUEDROID_SUPPORT 1
+#else
+#define BT_BLUEDROID_SUPPORT 0
+#endif
 
 struct bluesleep_info {
 	unsigned host_wake;
@@ -992,7 +996,7 @@ void bluesleep_sleep_wakeup(void)
 		/*Activating UART */
 		hsuart_power(1);
 	}
- #ifdef CONFIG_HUAWEI_KERNEL
+ #if defined(CONFIG_HUAWEI_KERNEL) || defined(CONFIG_JSR_KERNEL)
  else
  {
      /*Tx idle, Rx busy, we must also make host_wake asserted, that is low

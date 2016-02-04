@@ -445,10 +445,15 @@ static void ltr558_work_func(struct work_struct *work)
 			ps_changed = 0;
 		}
 
-		if (ps_changed) {
+		if (ps_changed) {			
+#if defined(CONFIG_JSR_I6)
+			tmp_data = g_ltr558_data->ps_state > 3 ? 0 : 5;
+#else
+			tmp_data = g_ltr558_data->ps_state > 2 ? 0 : 5;
+#endif
 			input_report_abs(g_ltr558_data->input,
 					ABS_DISTANCE,
-					g_ltr558_data->ps_state > 2 ? 0 : 5);
+					tmp_data);
 			input_sync(g_ltr558_data->input);
 		}
 	}
@@ -647,7 +652,7 @@ static ssize_t ltr558_store_debug_regs(struct device *dev,
 static ssize_t ltr558_show_adc_data(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
-	u8 high,low;
+	int high,low;
 	char *after;
 	after = buf;
 

@@ -19,9 +19,4 @@
 
 obj-y += accelerometer/
 obj-y += geomagnetic/
-#obj-m += gyroscope/
-#obj-m += light/
 obj-y += orientation/
-#obj-m += pressure/
-#obj-m += proximity/
-#obj-m += temperature/

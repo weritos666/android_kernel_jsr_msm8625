@@ -17,4 +17,4 @@
 # USA.
 #
 
-obj-y := yas_ori_kernel_driver.o
+obj-$(CONFIG_INPUT_YAS_ORIENTATION) += yas_ori_kernel_driver.o

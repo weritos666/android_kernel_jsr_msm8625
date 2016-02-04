@@ -142,7 +142,7 @@ int v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
 				struct v4l2_subdev *sd)
 {
 #if defined(CONFIG_MEDIA_CONTROLLER)
-	struct media_entity *entity = &sd->entity;
+	struct media_entity *entity;
 #endif
 	int err;
 
@@ -170,6 +170,7 @@ int v4l2_device_register_subdev(struct v4l2_device *v4l2_dev,
 
 #if defined(CONFIG_MEDIA_CONTROLLER)
 	/* Register the entity. */
+	entity = &sd->entity;
 	if (v4l2_dev->mdev) {
 		err = media_device_register_entity(v4l2_dev->mdev, entity);
 		if (err < 0)

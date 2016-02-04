@@ -427,7 +427,7 @@ static int mipi_dsi_probe(struct platform_device *pdev)
 		}
 
 		dsi_irq = platform_get_irq(pdev, 0);
-		if (dsi_irq < 0) {
+		if ((int)dsi_irq < 0) {
 			pr_err("mipi_dsi: can not get mdp irq\n");
 			return -ENOMEM;
 		}

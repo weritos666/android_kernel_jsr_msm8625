@@ -13,7 +13,7 @@
 #include <linux/gfp.h>
 #include <linux/slab.h>
 #include <linux/percpu.h>
-#ifdef CONFIG_HUAWEI_KERNEL
+#if defined(CONFIG_HUAWEI_KERNEL) || defined(CONFIG_JSR_KERNEL)
 #include <linux/syscore_ops.h>
 #endif
 
@@ -27,7 +27,7 @@ EXPORT_SYMBOL_GPL(cpu_subsys);
 
 static DEFINE_PER_CPU(struct device *, cpu_sys_devices);
 
-#ifdef CONFIG_HUAWEI_KERNEL
+#if defined(CONFIG_HUAWEI_KERNEL) || defined(CONFIG_JSR_KERNEL)
 static bool sys_shutdown;
 static void cpu_sys_shutdown(void)
 {
@@ -58,7 +58,7 @@ static ssize_t __ref store_online(struct device *dev,
 	struct cpu *cpu = container_of(dev, struct cpu, dev);
 	ssize_t ret;
 
-#ifdef CONFIG_HUAWEI_KERNEL
+#if defined(CONFIG_HUAWEI_KERNEL) || defined(CONFIG_JSR_KERNEL)
 	/* if the syscore shutdown, it's mean to in restarting. cancel the sys file operator */
 	if (sys_shutdown)
 	{
@@ -358,7 +358,7 @@ void __init cpu_dev_init(void)
 #if defined(CONFIG_SCHED_MC) || defined(CONFIG_SCHED_SMT)
 	sched_create_sysfs_power_savings_entries(cpu_subsys.dev_root);
 #endif
-#ifdef CONFIG_HUAWEI_KERNEL
+#if defined(CONFIG_HUAWEI_KERNEL) || defined(CONFIG_JSR_KERNEL)
 	/* register the shutdown function */
 	sys_shutdown=0;
 	register_syscore_ops(&cpu_syscore_ops);

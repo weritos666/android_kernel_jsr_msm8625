@@ -820,7 +820,7 @@ static int msm_server_get_fmt(struct msm_cam_v4l2_device *pcam,
 	pix->pixelformat  = pcam->dev_inst[idx]->vid_fmt.fmt.pix.pixelformat;
 	pix->bytesperline = pcam->dev_inst[idx]->vid_fmt.fmt.pix.bytesperline;
 	pix->colorspace   = pcam->dev_inst[idx]->vid_fmt.fmt.pix.colorspace;
-	if (pix->bytesperline < 0)
+	if ((long)pix->bytesperline < 0)
 		return pix->bytesperline;
 
 	pix->sizeimage    = pix->height * pix->bytesperline;

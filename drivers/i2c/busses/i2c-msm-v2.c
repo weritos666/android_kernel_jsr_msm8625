@@ -2045,7 +2045,7 @@ static int __devinit i2c_msm_qup_rsrcs_init(struct platform_device *pdev,
 	}
 
 	bam->irq = platform_get_irq_byname(pdev, "bam_irq");
-	if (bam->irq < 0) {
+	if ((int)bam->irq < 0) {
 		dev_warn(&pdev->dev, "missing 'bam_irq' resource entry");
 		return -EINVAL;
 	}
