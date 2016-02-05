@@ -167,6 +167,15 @@ static struct msm_camera_gpio_conf gpio_conf_ar0543 = {
 	.gpio_no_mux = 1,
 };
 #endif
+
+#ifdef CONFIG_OV5647_TRULY_CM8312
+static struct msm_camera_gpio_conf gpio_conf_ov5647 = {
+	.camera_off_table = camera_off_gpio_table,
+	.camera_on_table = camera_on_gpio_table,
+	.gpio_no_mux = 1,
+};
+#endif
+
 #ifdef CONFIG_OV5648_TRULY_CM8352
 static struct msm_camera_gpio_conf gpio_conf_ov5648_truly_cm8352 = {
 	.camera_off_table = camera_off_gpio_table,
@@ -509,7 +518,108 @@ static struct msm_camera_sensor_info msm_camera_sensor_ov5647_truly_cm6868_data 
 	.actuator_info = &msm_act_main_cam_6_info,
 };
 #endif
+#ifdef CONFIG_MT9V113
+static struct msm_camera_sensor_platform_info sensor_board_info_mt9v113 = {
+	.mount_angle = 270,
+	.cam_vreg = msm_cam_vreg,
+	.num_vreg = ARRAY_SIZE(msm_cam_vreg),
+	.gpio_conf = &gpio_conf_mt9v113,
+};
 
+static struct msm_camera_sensor_flash_data flash_mt9v113 = {
+	.flash_type     = MSM_CAMERA_FLASH_NONE,
+};
+
+static struct msm_camera_sensor_info msm_camera_sensor_mt9v113_data = {
+	.sensor_name	    = "mt9v113",
+	.sensor_reset_enable    = 1,
+	.pmic_gpio_enable  = 0,
+	.sensor_reset	   = GPIO_NOT_CONFIGURED,
+	.sensor_pwd	     = GPIO_NOT_CONFIGURED,
+	.pdata			= &msm_camera_device_data_csi0[0],
+	.flash_data	     = &flash_mt9v113,
+	.sensor_platform_info   = &sensor_board_info_mt9v113,
+	.csi_if		 = 1,
+	.camera_type = FRONT_CAMERA_2D,
+	.sensor_type = YUV_SENSOR,
+};
+#endif
+#ifdef CONFIG_SP0A28
+static struct msm_camera_sensor_platform_info sensor_board_info_sp0a28 = {
+	.mount_angle = 270,
+	.cam_vreg = msm_cam_vreg,
+	.num_vreg = ARRAY_SIZE(msm_cam_vreg),
+	.gpio_conf = &gpio_conf_sp0a28,
+};
+
+static struct msm_camera_sensor_flash_data flash_sp0a28= {
+	.flash_type     = MSM_CAMERA_FLASH_NONE,
+};
+
+static struct msm_camera_sensor_info msm_camera_sensor_sp0a28_data = {
+	.sensor_name	    = "sp0a28",
+	.sensor_reset_enable    = 1,
+	.pmic_gpio_enable  = 0,
+	.sensor_reset	   = GPIO_NOT_CONFIGURED,
+	.sensor_pwd	     = GPIO_NOT_CONFIGURED,
+	.pdata			= &msm_camera_device_data_csi0[0],
+	.flash_data	     = &flash_sp0a28,
+	.sensor_platform_info   = &sensor_board_info_sp0a28,
+	.csi_if		 = 1,
+	.camera_type = FRONT_CAMERA_2D,
+	.sensor_type = YUV_SENSOR,
+};
+#endif
+
+#ifdef CONFIG_OV5647_TRULY_CM8312
+#if 0
+static struct msm_actuator_info msm_act_main_cam_7_info = {
+	.board_info     = &msm_act_main_cam_i2c_info,
+	.cam_name   = MSM_ACTUATOR_MAIN_CAM_7,
+	.bus_id         = MSM_GSBI0_QUP_I2C_BUS_ID,
+	.vcm_pwd        = GPIO_NOT_CONFIGURED,
+	.vcm_enable     = 0,
+};
+#endif
+static struct msm_actuator_info msm_act_main_cam_6_info = {
+	.board_info     = &msm_act_main_cam_i2c_info,
+	.cam_name   = MSM_ACTUATOR_MAIN_CAM_6,
+	.bus_id         = MSM_GSBI0_QUP_I2C_BUS_ID,
+	.vcm_pwd        = GPIO_NOT_CONFIGURED,
+	.vcm_enable     = 0,
+};
+static struct msm_camera_sensor_platform_info sensor_board_info_ov5647 = {
+	.mount_angle = 270,
+	.cam_vreg = msm_cam_vreg,
+	.num_vreg = ARRAY_SIZE(msm_cam_vreg),
+	.gpio_conf = &gpio_conf_ov5647,
+};
+static struct msm_camera_sensor_flash_src msm_flash_src_ov5647 = {
+	.flash_sr_type = MSM_CAMERA_FLASH_SRC_LED1,
+	._fsrc.ext_driver_src.led_en = 32,
+	//._fsrc.ext_driver_src.led_torch_en = 23,
+	._fsrc.ext_driver_src.led_flash_en = 13,
+	//._fsrc.ext_driver_src.flash_id = MAM_CAMERA_EXT_LED_FLASH_LM3554,
+};
+static struct msm_camera_sensor_flash_data flash_ov5647 = {
+	.flash_type             = MSM_CAMERA_FLASH_LED,
+	.flash_src              = &msm_flash_src_ov5647,
+};
+static struct msm_camera_sensor_info msm_camera_sensor_ov5647_data = {
+	.sensor_name    = "ov5647",
+	.sensor_reset_enable = 1,
+	.pmic_gpio_enable  = 0,
+	.sensor_reset   = GPIO_NOT_CONFIGURED,
+	.sensor_pwd     = GPIO_NOT_CONFIGURED,
+	.pdata          = &msm_camera_device_data_csi1[0],
+	.flash_data     = &flash_ov5647,
+	.sensor_platform_info   = &sensor_board_info_ov5647,
+	.csi_if                 = 1,
+	.camera_type	= BACK_CAMERA_2D,
+	.sensor_type = BAYER_SENSOR,
+	.actuator_info = &msm_act_main_cam_6_info,
+};
+#endif
 #ifdef CONFIG_OV5648_TRULY_CM8352
 static struct msm_actuator_info msm_act_main_cam_7_info = {
 	.board_info     = &msm_act_main_cam_i2c_info,
@@ -518,7 +628,6 @@ static struct msm_actuator_info msm_act_main_cam_7_info = {
 	.vcm_pwd        = GPIO_NOT_CONFIGURED,
 	.vcm_enable     = 0,
 };
-
 static struct msm_camera_sensor_platform_info sensor_board_info_ov5648_truly_cm8352 = {
 	.mount_angle = MOUNT_ANGLE_NOT_CONFIGURED,
 	.cam_vreg = msm_cam_vreg,
@@ -959,6 +1068,15 @@ sensor_board_info_ov8825_truly_cm8313.cam_vreg = ov8825_truly_cm8313_gpio_vreg;
 
 #endif
 
+#ifdef CONFIG_OV5647_TRULY_CM8312
+		//Add SKUA specific settings, ov5647/Mp9v113 GPIOs
+		msm_camera_sensor_ov5647_data.sensor_reset = GPIO_SKU3_CAM_5MP_CAMIF_RESET;
+		msm_camera_sensor_ov5647_data.sensor_pwd = GPIO_SKU3_CAM_5MP_SHDN_N;
+		msm_camera_sensor_ov5647_data.vcm_pwd = 0;
+		msm_camera_sensor_ov5647_data.vcm_enable = 0;
+
+#endif
+
 //add by hanjue 2012.12.22
 #ifdef CONFIG_AR0543
 		sensor_board_info_ar0543.cam_vreg = ar0543_gpio_vreg;
@@ -1106,10 +1224,10 @@ static struct i2c_board_info i2c_camera_devices_sku5[] = {
 		.platform_data = &msm_camera_sensor_ov7692_data,
 	},
 #endif
-#ifdef CONFIG_AR0543
+#ifdef CONFIG_OV5647_TRULY_CM8312
 	{
-		I2C_BOARD_INFO("ar0543", 0x64),
-		.platform_data = &msm_camera_sensor_ar0543_data,
+		I2C_BOARD_INFO("ov5647", 0x36 << 1),//original
+		.platform_data = &msm_camera_sensor_ov5647_data,
 	},
 #endif
 };
