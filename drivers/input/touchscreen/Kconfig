@@ -975,6 +975,17 @@ config TOUCHSCREEN_ELAN_KTF2K
                 
 #added end by hjl 2012-1224
 
+config TS_FT5306
+       tristate "FocalTech ft5306"
+       depends on I2C
+       help
+         Say Y here if you have a ft5306 touchscreen.
+
+         If unsure, say N.
+
+         To compile this driver as a module, choose M here: the
+		 module will be called ft5306_ts.
+
 config HUAWEI_FEATURE_RMI_TOUCH
        tristate "Synaptics RMI4 based touchscreens"
        depends on I2C

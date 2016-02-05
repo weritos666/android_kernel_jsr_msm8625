@@ -4,6 +4,8 @@
 
 # Each configuration option enables a list of files.
 
+ccflags-y += -Wunused-label
+
 wm97xx-ts-y := wm97xx-core.o
 
 obj-$(CONFIG_TOUCHSCREEN_88PM860X)	+= 88pm860x-ts.o
@@ -89,3 +91,4 @@ obj-$(CONFIG_HUAWEI_GT968_TOUCHSCREEN)  += gt968.o goodix_tool.o gt968_update.o
 obj-$(CONFIG_TOUCHSCREEN_HIMAX)		+= himax_ts.o
 #add by hjl for i6 Elan Touch Screen
 obj-$(CONFIG_TOUCHSCREEN_ELAN_KTF2K)	+= ektf2k.o
+obj-$(CONFIG_TS_FT5306)       += ft5306_ts.o
