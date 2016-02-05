@@ -361,6 +361,15 @@ config OV8825_TRULY_CM8313
 	  Support for OV8825_TRULY_CM8313 sensor driver.
 	  It is a Bayer 8MP sensor with auto focus and it supports
 	  two mipi lanes, required for msm8625 platform.
+	  Say Y here if this is msm8625 variant platform.
+
+config OV5647_TRULY_CM8312
+	bool "Sensor ov5647_truly_cm8312 (Omnivision 8M)"
+	depends on MSM_CAMERA
+	---help---
+	  Support for OV5647_TRULY_CM8312 sensor driver.
+	  It is a Bayer 8MP sensor with auto focus and it supports
+	  two mipi lanes, required for msm8625 platform.
 	  Say Y here if this is msm8625 variant platform.	  
 
 config VB6801

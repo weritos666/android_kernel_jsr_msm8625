@@ -9,6 +9,7 @@ obj-$(CONFIG_HUAWEI_CAMERA_SENSOR_S5K5CA) += s5k5ca_v4l2.o
 obj-$(CONFIG_OV5647) += ov5647_v4l2.o
 obj-$(CONFIG_OV8825) += ov8825_v4l2.o
 obj-$(CONFIG_OV8825_TRULY_CM8313) += ov8825_truly_cm8313_v4l2.o
+obj-$(CONFIG_OV5647_TRULY_CM8312) += ov5647_truly_cm8312_v4l2.o
 obj-$(CONFIG_GC0339) += gc0339_v4l2.o
 obj-$(CONFIG_OV2675) += ov2675_v4l2.o
 obj-$(CONFIG_IMX074) += imx074_v4l2.o
