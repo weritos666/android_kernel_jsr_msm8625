@@ -334,6 +334,7 @@ static inline unsigned int cpufreq_get(unsigned int cpu)
 #ifdef CONFIG_CPU_FREQ
 unsigned int cpufreq_quick_get(unsigned int cpu);
 unsigned int cpufreq_quick_get_max(unsigned int cpu);
+unsigned int cpufreq_quick_get_util(unsigned int cpu);
 #else
 static inline unsigned int cpufreq_quick_get(unsigned int cpu)
 {
@@ -444,6 +445,9 @@ extern struct cpufreq_governor cpufreq_gov_smartmax_eps;
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_SUPERBAD)
 extern struct cpufreq_governor cpufreq_gov_superbad;
 #define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_superbad)
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_SMOOTHASS)
+extern struct cpufreq_governor cpufreq_gov_smoothass;
+#define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_smoothass)
 #endif
 
 

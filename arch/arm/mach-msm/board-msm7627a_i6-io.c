@@ -475,5 +475,5 @@ void __init qrd7627a_add_io_devices(void)
 		tricolor_leds_gpio_setup();
 	}
 #endif  
-	
+}	
 

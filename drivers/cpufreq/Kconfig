@@ -180,7 +180,14 @@ config CPU_FREQ_DEFAULT_GOV_SMARTMAX
 config CPU_FREQ_DEFAULT_GOV_SAVAGEDZEN
 	bool "savagedzen"
 	select CPU_FREQ_GOV_SAVAGEDZEN
-	help	
+	help
+
+config CPU_FREQ_DEFAULT_GOV_SMOOTHASS
+ 	bool "smoothass"
+ 	select CPU_FREQ_GOV_SMOOTHASS
+ 	select CPU_FREQ_GOV_PERFORMANCE
+ 	help
+ 	  Use the CPUFreq governor 'smoothass' as default.	
 
 config CPU_FREQ_DEFAULT_GOV_ONDEMANDQ
 	bool "ondemandq"
@@ -748,6 +755,12 @@ config CPU_FREQ_GOV_SMARTASSH3
 config CPU_FREQ_GOV_SMARTMAX
 	tristate "'smartmax' cpufreq policy governor"
 	help	
+
+config CPU_FREQ_GOV_SMOOTHASS
+	tristate "'smoothass' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	smoothass' - a "slightly more agressive smartass" governor!
 	
 config CPU_FREQ_GOV_HYPER
 	tristate "'hyper' cpufreq policy governor"
