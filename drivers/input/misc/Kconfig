@@ -687,6 +687,13 @@ config INPUT_LTR558
 	help
 	  Driver for LTR558 light/proximity sensor.
 
+config INPUT_LTR558_I6
+	tristate "LTR558 i6 light/proximity sensor support"
+	depends on I2C
+	default n
+	help
+	  Driver for LTR558 light/proximity sensor.
+
 config MXC_MMA8452
 	tristate "MMA8452 3-Axis Orientation/Motion Detection Sensor driver"
 	depends on I2C && SYSFS
