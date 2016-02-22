@@ -58,6 +58,13 @@ static uint32_t wait_pending;
 
 static struct android_alarm alarms[ANDROID_ALARM_TYPE_COUNT];
 
+#ifdef CONFIG_JSR_KERNEL
+#define ANDROID_ALARM_RTC_DEVICEUP 6
+void set_alarm_rtc_deviceup_type(int isdeviceup);
+int get_alarm_rtc_deviceup_type(void);
+void set_alarm_deviceup_dev(ktime_t end);
+#endif
+
 static long alarm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	int rv = 0;
@@ -67,7 +74,15 @@ static long alarm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	struct timespec tmp_time;
 	enum android_alarm_type alarm_type = ANDROID_ALARM_IOCTL_TO_TYPE(cmd);
 	uint32_t alarm_type_mask = 1U << alarm_type;
-
+#ifdef CONFIG_JSR_KERNEL
+	if (alarm_type == ANDROID_ALARM_RTC_DEVICEUP) {
+		alarm_type = ANDROID_ALARM_RTC_WAKEUP;
+		set_alarm_rtc_deviceup_type(1);
+	} else {
+		set_alarm_rtc_deviceup_type(0);
+	}
+	alarm_type_mask = 1U << alarm_type;
+#endif
 	if (alarm_type >= ANDROID_ALARM_TYPE_COUNT)
 		return -EINVAL;
 
@@ -133,6 +148,9 @@ from_old_alarm_set:
 			timespec_to_ktime(new_alarm_time),
 			timespec_to_ktime(new_alarm_time));
 		spin_unlock_irqrestore(&alarm_slock, flags);
+#ifdef CONFIG_JSR_KERNEL
+		set_alarm_deviceup_dev(timespec_to_ktime(new_alarm_time));
+#endif
 		if ((alarm_type == ANDROID_ALARM_RTC_POWEROFF_WAKEUP) &&
 				(ANDROID_ALARM_BASE_CMD(cmd) ==
 				 ANDROID_ALARM_SET(0)))
