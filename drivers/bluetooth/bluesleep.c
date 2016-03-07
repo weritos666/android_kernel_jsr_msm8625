@@ -876,7 +876,7 @@ MODULE_LICENSE("GPL");
 #ifdef CONFIG_HUAWEI_KERNEL
 #define BT_BLUEDROID_SUPPORT 1
 #else
-#define BT_BLUEDROID_SUPPORT 0
+#define BT_BLUEDROID_SUPPORT 1
 #endif
 
 struct bluesleep_info {
