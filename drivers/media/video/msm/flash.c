@@ -23,37 +23,7 @@
 #include <mach/camera.h>
 #include <mach/gpio.h>
 
-#ifdef CONFIG_HUAWEI_KERNEL
-#include <linux/mfd/pmic8058.h>
-#include <linux/gpio.h>
-#endif
-
-#ifdef CONFIG_HUAWEI_EVALUATE_POWER_CONSUMPTION 
-#include <mach/msm_battery.h>
-#define CAMERA_FLASH_CUR_DIV 10
-#endif
-
 struct i2c_client *sx150x_client;
-
-#define CAMERA_LED_TORCH_MA 50
-#define CAMERA_LED_TORCH_LOW_MA    50
-#define CAMERA_LED_TORCH_MIDDLE_MA 100
-#define CAMERA_LED_TORCH_HIGH_MA   150
-#define PM8058_GPIO_PM_TO_SYS(pm_gpio)     (pm_gpio + NR_GPIO_IRQS)*/
-
-#ifdef CONFIG_HUAWEI_KERNEL
-static struct  pm_gpio camera_flash = {
-		.direction      = PM_GPIO_DIR_OUT,
-		.output_buffer  = PM_GPIO_OUT_BUF_CMOS,
-		.output_value   = 0,
-		.pull           = PM_GPIO_PULL_NO,
-		.vin_sel        = 0,
-		.out_strength   = PM_GPIO_STRENGTH_HIGH,
-		.function       = PM_GPIO_FUNC_2,
-		.inv_int_pol 	= 1,
-	};
-#endif
-
 struct timer_list timer_flash;
 static struct msm_camera_sensor_info *sensor_data;
 enum msm_cam_flash_stat{
@@ -61,48 +31,6 @@ enum msm_cam_flash_stat{
 	MSM_CAM_FLASH_ON,
 };
 
-typedef struct msm_flash_probed_tag
-{
-	int (* set_led_state)(unsigned led_state);
-}msm_flash_probed;
-
-static msm_flash_probed flash_probed_succeed = {
-	.set_led_state = NULL
-	};
-
-
-/* Register interface: use for registering the setting led's state function. */
-/* Usage: Need to be added to the probe function when probe succeed. */
-void register_led_set_state( int (* func)(unsigned led_state) )
-{
-	flash_probed_succeed.set_led_state = func;
-	if (func)
-	{
-		CDBG("%s : Register succeed.\n", __func__);
-	}
-	else
-	{
-		printk("%s : Register func is NULL.\n", __func__);
-	}
-}
-
-/*Call Interface: Set led's state interface for all type of leds. */
-int call_led_set_state(unsigned led_state)
-{
-	int ret =0;
-	
-	if  ( NULL != flash_probed_succeed.set_led_state )
-	{
-		ret = flash_probed_succeed.set_led_state(led_state);
-		CDBG("%s : LED state is %d.\n", __func__, led_state);
-	}
-	else
-	{
-		printk("%s : All LED flash probed failed or didn't register led_set_state after probe.\n", __func__);
-	}
-
-	return ret;
-}
 static struct i2c_client *sc628a_client;
 
 static int32_t flash_i2c_txdata(struct i2c_client *client,
@@ -369,14 +297,14 @@ int msm_camera_flash_led(
 
 	case MSM_CAMERA_LED_LOW:
 		CDBG("MSM_CAMERA_LED_LOW\n");
-		gpio_set_value_cansleep(external->led_en, 1);
-		gpio_set_value_cansleep(external->led_flash_en, 1);
+		gpio_set_value_cansleep(external->led_flash_en, 0);
+        gpio_set_value_cansleep(external->led_en, 1);
 		break;
 
 	case MSM_CAMERA_LED_HIGH:
 		CDBG("MSM_CAMERA_LED_HIGH\n");
-		gpio_set_value_cansleep(external->led_en, 1);
 		gpio_set_value_cansleep(external->led_flash_en, 1);
+		gpio_set_value_cansleep(external->led_en, 1);
 		break;
 
 	default:
@@ -538,9 +466,6 @@ error:
 	return rc;
 }
 
-/*description:pwm camera flash*/
-static struct pwm_device *flash_pwm = NULL;
-
 static int msm_camera_flash_pwm(
 	struct msm_camera_sensor_flash_pwm *pwm,
 	unsigned led_state)
@@ -548,15 +473,9 @@ static int msm_camera_flash_pwm(
 	int rc = 0;
 	int PWM_PERIOD = USEC_PER_SEC / pwm->freq;
 
-	/*If it is the first time to enter the function*/
+	static struct pwm_device *flash_pwm;
+
 	if (!flash_pwm) {
-		#ifdef CONFIG_HUAWEI_KERNEL
-		rc = pm8xxx_gpio_config( 205, &camera_flash);
-		if (rc)  {
-			pr_err("%s PMIC GPIO 24 write failed\n", __func__);
-			return rc;
-		}
-		#endif
 		flash_pwm = pwm_request(pwm->channel, "camera-flash");
 		if (flash_pwm == NULL || IS_ERR(flash_pwm)) {
 			pr_err("%s: FAIL pwm_request(): flash_pwm=%p\n",
@@ -582,34 +501,7 @@ static int msm_camera_flash_pwm(
 		if (rc >= 0)
 			rc = pwm_enable(flash_pwm);
 		break;
-	case MSM_CAMERA_LED_TORCH:
-		rc = pwm_config(flash_pwm,
-			(PWM_PERIOD/pwm->max_load)*CAMERA_LED_TORCH_MA,
-			PWM_PERIOD);
-		if (rc >= 0)
-			rc = pwm_enable(flash_pwm);
-		break;
-    case MSM_CAMERA_LED_TORCH_LOW:
-        rc = pwm_config(flash_pwm,
-			(PWM_PERIOD/pwm->max_load)*CAMERA_LED_TORCH_LOW_MA,
-			PWM_PERIOD);
-		if (rc >= 0)
-			rc = pwm_enable(flash_pwm);
-        break;
-    case MSM_CAMERA_LED_TORCH_MIDDLE:
-        rc = pwm_config(flash_pwm,
-			(PWM_PERIOD/pwm->max_load)*CAMERA_LED_TORCH_MIDDLE_MA,
-			PWM_PERIOD);
-		if (rc >= 0)
-			rc = pwm_enable(flash_pwm);
-        break;
-    case MSM_CAMERA_LED_TORCH_HIGH:
-        rc = pwm_config(flash_pwm,
-			(PWM_PERIOD/pwm->max_load)*CAMERA_LED_TORCH_HIGH_MA,
-			PWM_PERIOD);
-		if (rc >= 0)
-			rc = pwm_enable(flash_pwm);
-        break;
+
 	case MSM_CAMERA_LED_OFF:
 		pwm_disable(flash_pwm);
 		break;
@@ -708,27 +600,6 @@ int32_t msm_camera_flash_set_led_state(
 		break;
 	}
 
-#ifdef CONFIG_HUAWEI_EVALUATE_POWER_CONSUMPTION 
-    /* start calculate flash consume */
-	switch (led_state) {
-	case MSM_CAMERA_LED_OFF:
-        huawei_rpc_current_consuem_notify(EVENT_CAMERA_FLASH_STATE, 0);
-		break;
-
-	case MSM_CAMERA_LED_LOW:
-        /* the consume depend on low_current */
-        huawei_rpc_current_consuem_notify(EVENT_CAMERA_FLASH_STATE, fdata->flash_src->_fsrc.pmic_src.low_current);
-		break;
-
-	case MSM_CAMERA_LED_HIGH:
-        /* the consume depend on high_current */
-        huawei_rpc_current_consuem_notify(EVENT_CAMERA_FLASH_STATE, fdata->flash_src->_fsrc.pmic_src.high_current);
-		break;
-
-	default:
-		break;
-	}
-#endif
 	return rc;
 }
 
@@ -891,7 +762,8 @@ int msm_flash_ctrl(struct msm_camera_sensor_info *sdata,
 	sensor_data = sdata;
 	switch (flash_info->flashtype) {
 	case LED_FLASH:
-		rc = call_led_set_state(flash_info->ctrl_data.led_state);
+		rc = msm_camera_flash_set_led_state(sdata->flash_data,
+			flash_info->ctrl_data.led_state);
 			break;
 	case STROBE_FLASH:
 		rc = msm_strobe_flash_ctrl(sdata->strobe_flash_data,

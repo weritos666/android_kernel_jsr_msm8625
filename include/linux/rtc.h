@@ -152,6 +152,9 @@ struct rtc_class_ops {
 	int (*set_mmss)(struct device *, unsigned long secs);
 	int (*read_callback)(struct device *, int data);
 	int (*alarm_irq_enable)(struct device *, unsigned int enabled);
+#ifdef CONFIG_JSR_KERNEL
+	int (*set_alarm_deviceup) (struct device *, struct rtc_wkalrm *);
+#endif
 };
 
 #define RTC_DEVICE_NAME_SIZE 20
@@ -232,6 +235,10 @@ extern int rtc_read_alarm(struct rtc_device *rtc,
 			struct rtc_wkalrm *alrm);
 extern int rtc_set_alarm(struct rtc_device *rtc,
 				struct rtc_wkalrm *alrm);
+#ifdef CONFIG_JSR_KERNEL
+extern int alarm_set_deviceup(struct rtc_device *rtc,
+                struct rtc_wkalrm *alarm);
+#endif
 extern int rtc_initialize_alarm(struct rtc_device *rtc,
 				struct rtc_wkalrm *alrm);
 extern void rtc_update_irq(struct rtc_device *rtc,

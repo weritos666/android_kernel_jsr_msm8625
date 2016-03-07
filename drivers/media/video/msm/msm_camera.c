@@ -2904,23 +2904,8 @@ static long msm_ioctl_config(struct file *filep, unsigned int cmd,
 			ERR_COPY_FROM_USER();
 			rc = -EFAULT;
 		} else
-		{
-            /*Condition that the flash is tps61310 */
-			if(machine_is_msm8255_u8680())
-			{
-				if(LED_FLASH == flash_info.flashtype)
-				{
-					CDBG("tps61310_set_flash enter");
-					rc = tps61310_set_flash(flash_info.ctrl_data.led_state);
-				}
-			}
-            /*other flashes*/
-			else
-			{
-				CDBG("msm_flash_ctrl enter");
-				rc = msm_flash_ctrl(pmsm->sync->sdata, &flash_info);
-			}
-		}
+			rc = msm_flash_ctrl(pmsm->sync->sdata, &flash_info);
+
 		break;
 	}
 
@@ -3989,14 +3974,7 @@ static int msm_sync_init(struct msm_sync *sync,
 	msm_queue_init(&sync->vpe_q, "vpe");
 
 	pm_qos_add_request(&sync->idle_pm_qos, PM_QOS_CPU_DMA_LATENCY,
-					   PM_QOS_DEFAULT_VALUE);
-// J not use wake_lock, so delete here
-#ifdef CONFIG_HUAWEI_KERNEL
-    /** do not sleep in camera to help lower the crash probability. qinwei **/
-	//wake_lock_init(&sync->wake_lock, WAKE_LOCK_SUSPEND, "msm_camera");
-#else
-	//wake_lock_init(&sync->wake_lock, WAKE_LOCK_IDLE, "msm_camera");
-#endif
+		PM_QOS_DEFAULT_VALUE);
 
 	rc = msm_camio_probe_on(pdev);
 	if (rc < 0) {

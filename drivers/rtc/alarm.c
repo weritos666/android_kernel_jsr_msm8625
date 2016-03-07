@@ -188,7 +188,30 @@ void android_alarm_init(struct android_alarm *alarm,
 	pr_alarm(FLOW, "created alarm, type %d, func %pF\n", type, function);
 }
 
+#ifdef CONFIG_JSR_KERNEL
+static int alarm_rtc_deviceup = 0;
 
+void set_alarm_rtc_deviceup_type(int isdeviceup)
+{
+	alarm_rtc_deviceup = isdeviceup;
+};
+
+int get_alarm_rtc_deviceup_type(void)
+{
+	return alarm_rtc_deviceup;
+};
+
+void set_alarm_deviceup_dev(ktime_t end)
+{
+    if (get_alarm_rtc_deviceup_type()) {
+        struct rtc_wkalrm rtc_alarm;
+        rtc_time_to_tm(ktime_to_timespec(end).tv_sec, &rtc_alarm.time);
+        rtc_alarm.enabled = 1;
+        alarm_set_deviceup(alarm_rtc_dev, &rtc_alarm);
+        set_alarm_rtc_deviceup_type(0);
+    }
+};
+#endif
 /**
  * android_alarm_start_range - (re)start an alarm
  * @alarm:	the alarm to be added
@@ -522,6 +545,7 @@ static int alarm_resume(struct platform_device *pdev)
 									false);
 	spin_unlock_irqrestore(&alarm_slock, flags);
 
+	set_alarm_time_to_rtc(power_on_alarm);
 	return 0;
 }
 

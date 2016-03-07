@@ -108,12 +108,14 @@ static struct adreno_device device_3d0 = {
 		},
 		.iomemname = KGSL_3D0_REG_MEMORY,
 		.ftbl = &adreno_functable,
+#if 0	
 #ifdef CONFIG_HAS_EARLYSUSPEND
 		.display_off = {
 			.level = EARLY_SUSPEND_LEVEL_STOP_DRAWING,
 			.suspend = kgsl_early_suspend_driver,
 			.resume = kgsl_late_resume_driver,
 		},
+#endif
 #endif
 		.cmd_log = KGSL_LOG_LEVEL_DEFAULT,
 		.ctxt_log = KGSL_LOG_LEVEL_DEFAULT,
@@ -3151,6 +3153,7 @@ static unsigned int adreno_isidle(struct kgsl_device *device)
 static int adreno_suspend_context(struct kgsl_device *device)
 {
 	int status = 0;
+
 	struct adreno_device *adreno_dev = ADRENO_DEVICE(device);
 
 	/* switch to NULL ctxt */
