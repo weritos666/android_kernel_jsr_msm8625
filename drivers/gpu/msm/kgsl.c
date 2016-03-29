@@ -681,7 +681,6 @@ EXPORT_SYMBOL(kgsl_check_timestamp);
 
 static int kgsl_suspend_device(struct kgsl_device *device, pm_message_t state)
 { 
-#if 0 
 	int status = -EINVAL;
 	unsigned int nap_allowed_saved;
 	struct kgsl_pwrscale_policy *policy_saved;
@@ -742,14 +741,12 @@ static int kgsl_suspend_device(struct kgsl_device *device, pm_message_t state)
 
 end:
 	mutex_unlock(&device->mutex);
-#endif
 	KGSL_PWR_WARN(device, "suspend end\n");
-	return 0;
+	return status;;
 }
 
 static int kgsl_resume_device(struct kgsl_device *device)
 {
-#if 0
 	if (!device)
 		return -EINVAL;
 
@@ -775,7 +772,6 @@ static int kgsl_resume_device(struct kgsl_device *device)
 	kgsl_pwrctrl_request_state(device, KGSL_STATE_NONE);
 
 	mutex_unlock(&device->mutex);
-#endif
 	KGSL_PWR_WARN(device, "resume end\n");
 	return 0;
 }
@@ -811,7 +807,6 @@ const struct dev_pm_ops kgsl_pm_ops = {
 	.runtime_resume = kgsl_runtime_resume,
 };
 EXPORT_SYMBOL(kgsl_pm_ops);
-#if 0
 void kgsl_early_suspend_driver(struct early_suspend *h)
 {
 	struct kgsl_device *device = container_of(h,
@@ -830,7 +825,7 @@ void kgsl_early_suspend_driver(struct early_suspend *h)
 	KGSL_PWR_WARN(device, "early suspend end\n");
 }
 EXPORT_SYMBOL(kgsl_early_suspend_driver);
-#endif
+
 int kgsl_suspend_driver(struct platform_device *pdev,
 					pm_message_t state)
 {
@@ -845,7 +840,7 @@ int kgsl_resume_driver(struct platform_device *pdev)
 	return kgsl_resume_device(device);
 }
 EXPORT_SYMBOL(kgsl_resume_driver);
-#if 0
+
 void kgsl_late_resume_driver(struct early_suspend *h)
 {
 	struct kgsl_device *device = container_of(h,
@@ -879,7 +874,7 @@ void kgsl_late_resume_driver(struct early_suspend *h)
 	KGSL_PWR_WARN(device, "late resume end\n");
 }
 EXPORT_SYMBOL(kgsl_late_resume_driver);
-#endif
+
 /*
  * kgsl_destroy_process_private() - Cleanup function to free process private
  * @kref: - Pointer to object being destroyed's kref struct

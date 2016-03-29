@@ -18,8 +18,6 @@
  * along with this program; if not, you can find it at http://www.fsf.org
  */
 
-#define DEBUG 1
- 
 #include <linux/err.h>
 #include <linux/slab.h>
 #include <linux/module.h>
@@ -102,17 +100,10 @@ static int msm_chg_init_rpc(unsigned long vers)
 		if (IS_ERR(chg_ep))
 			return -ENODATA;
 		chg_rpc_ids.vers_comp				= vers;
-#ifdef CONFIG_MSM_BATTERY_CHG_LEGACY
 		chg_rpc_ids.chg_usb_charger_connected_proc 	= 3;
 		chg_rpc_ids.chg_usb_charger_disconnected_proc 	= 4;
 		chg_rpc_ids.chg_usb_i_is_available_proc 	= 5;
 		chg_rpc_ids.chg_usb_i_is_not_available_proc 	= 6;
-#else
-		chg_rpc_ids.chg_usb_charger_connected_proc 	= 7;
-		chg_rpc_ids.chg_usb_charger_disconnected_proc 	= 8;
-		chg_rpc_ids.chg_usb_i_is_available_proc 	= 9;
-		chg_rpc_ids.chg_usb_i_is_not_available_proc 	= 10;
-#endif
 		return 0;
 	} else
 		return -ENODATA;
@@ -618,8 +609,6 @@ int usb_diag_update_pid_and_serial_num(uint32_t pid, const char *snum)
 		ret = msm_hsusb_is_serial_num_null(1);
 		if (ret)
 			return ret;
-		/* fixup qcom bug by yanzhijun 20110420 */
-		return 0;
 	}
 
 	ret = msm_hsusb_is_serial_num_null(0);
@@ -655,7 +644,9 @@ void hsusb_chg_connected(enum chg_type chgtype)
 	char *chg_types[] = {"STD DOWNSTREAM PORT",
 			"CARKIT",
 			"DEDICATED CHARGER",
-			"INVALID"};
+			"UNKNOWN",
+			"INVALID",
+	};
 
 	if (chgtype == USB_CHG_TYPE__INVALID) {
 		msm_chg_usb_i_is_not_available();

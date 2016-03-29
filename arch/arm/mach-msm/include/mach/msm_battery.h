@@ -1,62 +1,81 @@
-/* Copyright (c) 2009, Code Aurora Forum. All rights reserved.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 and
- * only version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- */
-
 
 #ifndef __MSM_BATTERY_H__
 #define __MSM_BATTERY_H__
 
-#define AC_CHG     0x00000001
-#define USB_CHG    0x00000002
+#define AC_CHG	0x00000001
+#define USB_CHG	0x00000002
+#define UNKNOWN_CHG	0x00000004
 
 struct msm_psy_batt_pdata {
 	u32 voltage_max_design;
 	u32 voltage_min_design;
-	u32 voltage_fail_safe;
-	u32 avail_chg_sources;
 	u32 batt_technology;
+	u32 avail_chg_sources;
 	u32 (*calculate_capacity)(u32 voltage);
 };
 
-#ifdef CONFIG_HUAWEI_EVALUATE_POWER_CONSUMPTION 
-typedef enum {   
-   EVENT_LCD_STATE = 0, /*LCD*/
-   EVENT_INS_CAMERA_STATE = 1, /*inside camera*/
-   EVENT_OUTS_CAMERA_STATE = 2, /*outside camera*/
-   EVENT_CAMERA_STATE = 3,     /*camera*/
-   EVENT_WIFI_STATE = 4, /*WIFI status*/  
-   EVENT_BT_STATE = 5,  /*blue tooth state*/      
-   EVENT_FM_STATE = 6, /* FM */
-   EVENT_CODEC_STATE = 7, /* AUDIO Speaker */  
-   EVENT_CAMERA_FLASH_STATE = 8, /* Camera flash */  
- 
-   EVENT_KEYPAD_BACKLIGHT_STATE = 20,  /*KPD backlight*/
-   EVENT_VIBRATOR_STATE,  /*vibrator state*/   
-   EVENT_GSM850_GSM900_STATE,  /*GSM850\GSM900*/
-   EVENT_GSM1800_GSM1900_STATE,  /*GSM1800\GSM1900*/
-   EVENT_WCDMA_RF_STATE,  /*WCDMA*/
-   EVENT_CDMA1X_RF_STATE,  /*WCDMA*/   
-   EVENT_SPEAKER_STATE,  /*SPEAKER*/
-   EVENT_CPU_STATE,/*CPU*/  
-   EVENT_GPS_STATE,/*GPS*/      
-   EVENT_HW_NONE = 0xFF
-} device_current_consume_type;
+enum {
+	BATTERY_REGISTRATION_SUCCESSFUL = 0,
+	BATTERY_DEREGISTRATION_SUCCESSFUL = BATTERY_REGISTRATION_SUCCESSFUL,
+	BATTERY_MODIFICATION_SUCCESSFUL = BATTERY_REGISTRATION_SUCCESSFUL,
+	BATTERY_INTERROGATION_SUCCESSFUL = BATTERY_REGISTRATION_SUCCESSFUL,
+	BATTERY_CLIENT_TABLE_FULL = 1,
+	BATTERY_REG_PARAMS_WRONG = 2,
+	BATTERY_DEREGISTRATION_FAILED = 4,
+	BATTERY_MODIFICATION_FAILED = 8,
+	BATTERY_INTERROGATION_FAILED = 16,
+	/* Client's filter could not be set because perhaps it does not exist */
+	BATTERY_SET_FILTER_FAILED         = 32,
+	/* Client's could not be found for enabling or disabling the individual
+	 * client */
+	BATTERY_ENABLE_DISABLE_INDIVIDUAL_CLIENT_FAILED  = 64,
+	BATTERY_LAST_ERROR = 128,
+};
 
-#define DEVICE_POWER_STATE_OFF 0
-#define DEVICE_POWER_STATE_ON 1
-#define SPEAKER_ON_STATE  1
-#define SPEAKER_OFF_STATE 0
+enum {
+	BATTERY_VOLTAGE_UP = 0,
+	BATTERY_VOLTAGE_DOWN,
+	BATTERY_VOLTAGE_ABOVE_THIS_LEVEL,
+	BATTERY_VOLTAGE_BELOW_THIS_LEVEL,
+	BATTERY_VOLTAGE_LEVEL,
+	BATTERY_ALL_ACTIVITY,
+	VBATT_CHG_EVENTS,
+	BATTERY_VOLTAGE_UNKNOWN
+};
 
-/* notify modem sides to calculate consume */
-int huawei_rpc_current_consuem_notify(device_current_consume_type device_event, __u32 device_state);
+enum chg_charger_status_type {
+	CHARGER_STATUS_GOOD,
+	CHARGER_STATUS_WEAK,
+	CHARGER_STATUS_NULL
+};
+
+enum chg_charger_hardware_type {
+	CHARGER_TYPE_USB_PC,
+	CHARGER_TYPE_USB_WALL,
+	CHARGER_TYPE_USB_UNKNOWN,
+	CHARGER_TYPE_USB_CARKIT
+};
+
+enum chg_battery_status_type {
+	BATTERY_STATUS_GOOD,
+	BATTERY_STATUS_OVER_TEMPERATURE,
+	BATTERY_STATUS_NULL
+};
+
+struct msm_batt_gauge {
+	int (*get_battery_mvolts) (void);
+	int (*get_battery_temperature) (void);
+	int (*is_battery_present) (void);
+	int (*is_battery_temp_within_range) (void);
+	int (*is_battery_id_valid) (void);
+	int (*get_battery_status)(void);
+	int (*get_batt_remaining_capacity) (void);
+};
+
+#ifdef CONFIG_MSM_SM_EVENT
+uint32_t msm_batt_get_batt_voltage (void);
 #endif
+int msm_batt_fuel_register(struct msm_batt_gauge* batt);
+void msm_batt_fuel_unregister(struct msm_batt_gauge* batt);
+
 #endif
